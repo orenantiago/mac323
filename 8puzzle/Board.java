@@ -97,47 +97,92 @@ public class Board {
     return true;
   }
   // all neighboring boards
-  // public Iterable<Board> neighbors() {
-  //
-  // }
-  //
-  // public class NeighborsIterator implements Iterator<Board> {
-  //   private int [][] tiles;
-  //   private int emptyRow, emptyCol, movement;
-  //
-  //   public NeighborsIterator(int[][]tiles) {
-  //     this.tiles = new int[tiles.length][tiles.length];
-  //     this.movement = 0;
-  //     for(int row = 0; row < tiles.length; row++) {
-  //       for(int col = 0; col < tiles.length; col++) {
-  //         if(tiles[row][col] == 0) {
-  //           emptyRow = row;
-  //           emptyCol = col;
-  //         }
-  //         this.tiles[row][col] = tiles[row][col];
-  //       }
-  //     }
-  //   }
-  //
-  //   public boolean hasNext() {
-  //     return this.movement < 4;
-  //   }
-  //
-  //   public Board next() {
-  //     int aux;
-  //     if(movement == 0) {
-  //       movement++;
-  //       if(emptyCol - 1 >= 0) {
-  //         aux = this.tiles[emptyRow][emptyCol];
-  //         this.tiles[emptyRow][emptyCol]
-  //       }
-  //     }
-  //   }
-  // }
+  public Iterable<Board> neighbors() {
+    return new NeighborsIterable(this.tiles);
+  }
+
+  public class NeighborsIterable implements Iterable<Board> {
+    private int [][] tiles;
+    public NeighborsIterable(int [][]tiles) {
+      this.tiles = tiles;
+    }
+    public NeighborsIterator iterator() {
+      return new NeighborsIterator(tiles);
+    }
+  }
+
+  public class NeighborsIterator implements Iterator<Board> {
+    private int [][] tiles;
+    private int emptyRow, emptyCol, movement;
+
+    public NeighborsIterator(int[][]tiles) {
+      this.tiles = new int[tiles.length][tiles.length];
+      this.movement = 0;
+      for(int row = 0; row < tiles.length; row++) {
+        for(int col = 0; col < tiles.length; col++) {
+          if(tiles[row][col] == 0) {
+            emptyRow = row;
+            emptyCol = col;
+          }
+          this.tiles[row][col] = tiles[row][col];
+        }
+      }
+    }
+
+    public boolean hasNext() {
+      return this.movement < 4;
+    }
+
+    public Board next() {
+      Board b;
+      if(movement == 0) {
+        movement++;
+        if(emptyCol - 1 >= 0) {
+          move(emptyRow, emptyCol - 1);
+          b = new Board(this.tiles);
+          move(emptyRow, emptyCol - 1);
+          return b;
+        }
+      }
+      if(movement == 1) {
+        movement++;
+        if(emptyRow - 1 >= 0) {
+          move(emptyRow - 1, emptyCol);
+          b = new Board(this.tiles);
+          move(emptyRow - 1, emptyCol);
+          return b;
+        }
+      }
+      if(movement == 2) {
+        movement++;
+        if(emptyCol + 1 < n) {
+          move(emptyRow, emptyCol + 1);
+          b = new Board(this.tiles);
+          move(emptyRow, emptyCol + 1);
+          return b;
+        }
+      }
+      if(movement == 3) {
+        movement++;
+        if(emptyRow + 1 < n) {
+          move(emptyRow + 1, emptyCol);
+          b = new Board(this.tiles);
+          move(emptyRow + 1, emptyCol);
+          return b;
+        }
+      }
+      return null;
+    }
+    private void move(int row, int col) {
+      int aux = this.tiles[emptyRow][emptyCol];
+      this.tiles[emptyRow][emptyCol] = this.tiles[row][col];
+      this.tiles[row][col] = aux;
+    }
+  }
   // public boolean isSolvable()            // is this board solvable?
 
   public static void main(String[] args) {
-    int [][] tiles = {{0,8,7},{4,5,6},{1,2,3}};
+    int [][] tiles = {{5,8,7},{4,0,6},{1,2,3}};
     Board b = new Board(tiles);
     StdOut.println(b);
     StdOut.println("tile at 0,0 = " + b.tileAt(0, 0));
@@ -158,6 +203,9 @@ public class Board {
 
     StdOut.println("b should not equal b1 " + !b.equals(b1));
     StdOut.println("b2 should equal b1 " + b2.equals(b1));
-
+    StdOut.println(b);
+    for(Board neighbor : b.neighbors()) {
+      StdOut.println(neighbor);
+    }
   }
 }
