@@ -1,5 +1,6 @@
 import edu.princeton.cs.algs4.StdOut;
 import java.lang.StringBuilder;
+import java.lang.IllegalArgumentException;
 
 public class Board {
   private int n;
@@ -27,6 +28,8 @@ public class Board {
   }
 
   public int tileAt(int row, int col) {
+    if(row < 0 || col < 0 || row >= n || col >= n)
+      throw new IllegalArgumentException();
     return this.tiles[row][col];
   }
 
@@ -86,5 +89,16 @@ public class Board {
     StdOut.println("tile at 0,0 = " + b.tileAt(0, 0));
     StdOut.println(b.hamming() + " tiles out of position");
     StdOut.println("manhattan distance = " + b.manhattan());
+    try {
+      b.tileAt(66,66);
+    } catch(IllegalArgumentException e) {
+      StdOut.println("catch corner case on tileAt function");
+    }
+
+    int[][] tiles2 = {{1,2,3},{4,5,6},{7,8,0}};
+    Board b1 = new Board(tiles2);
+    StdOut.println(b1);
+    StdOut.println(b1.hamming() + " tiles out of position");
+    StdOut.println("manhattan distance = " + b1.manhattan());
   }
 }
