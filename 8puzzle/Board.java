@@ -51,30 +51,27 @@ public class Board {
   }
   // sum of Manhattan distances between tiles and goal
   public int manhattan() {
-    int total = 0;
-    int aux;
+    int total = 0, desiredRow, desiredCol;
+
     for(int row = 0; row < n; row++) {
       for(int col = 0; col < n; col++) {
         if(tiles[row][col] != 0) {
-          int actual = n*row + col;
-          int desired = tiles[row][col] - 1;
-          // if(actual > desired) {
-          //   aux = actual - desired;
-          //   aux = aux/n + aux%n;
-          // }
-          if(desired != actual) {
-            aux = (desired + actual) % (n*n);
-            aux = aux/n + aux%n;
-          }
-          else
-            aux = 0;
-          StdOut.println(aux);
-          total += aux;
+          desiredRow = (tiles[row][col] - 1) / n;
+          desiredCol = (tiles[row][col] - 1) % n;
+          total += difference(row, desiredRow);
+          total += difference(col, desiredCol);
         }
       }
     }
-    return 0;
+    return total;
   }
+
+  private int difference(int x, int y) {
+    if(x < y)
+      return y - x;
+    return x - y;
+  }
+
   public boolean isGoal() {
     return hamming() == 0;
   }
@@ -88,6 +85,6 @@ public class Board {
     StdOut.println(b);
     StdOut.println("tile at 0,0 = " + b.tileAt(0, 0));
     StdOut.println(b.hamming() + " tiles out of position");
-    b.manhattan();
+    StdOut.println("manhattan distance = " + b.manhattan());
   }
 }
