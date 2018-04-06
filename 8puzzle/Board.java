@@ -96,6 +96,37 @@ public class Board {
 
     return true;
   }
+
+  // is this board solvable?
+  public boolean isSolvable() {
+    return isSolvableForParity(n % 2);
+  }
+  private boolean isSolvableForParity(int parity) {
+    int inversions = 0;
+    int blankRow = 0;
+    int aux;
+    for(int row1 = 0; row1 < n; row1++) {
+      for(int col1 = 0; col1 < n; col1++) {
+        for(int row2 = row1; row2 < n; row2++) {
+          aux = row2 == row1 ? col1 + 1 : 0;
+          for(int col2 = aux; col2 < n; col2++) {
+            if(tiles[row1][col1] != 0 && tiles[row2][col2] != 0 &&
+                    tiles[row1][col1] > tiles[row2][col2]) {
+              inversions++;
+            }
+            if(tiles[row1][col1] == 0) {
+              blankRow = row1;
+            }
+          }
+        }
+      }
+    }
+    if(parity == 0)
+      return (inversions+blankRow) % 2 != 0;
+    else
+      return inversions % 2 == 0;
+  }
+
   // all neighboring boards
   public Iterable<Board> neighbors() {
     return new NeighborsIterable(this.tiles);
@@ -179,7 +210,6 @@ public class Board {
       this.tiles[row][col] = aux;
     }
   }
-  // public boolean isSolvable()            // is this board solvable?
 
   public static void main(String[] args) {
     int [][] tiles = {{5,8,7},{4,0,6},{1,2,3}};
@@ -207,5 +237,7 @@ public class Board {
     for(Board neighbor : b.neighbors()) {
       StdOut.println(neighbor);
     }
+    StdOut.println("b should not be solvable " + !b.isSolvable());
+    StdOut.println("b2 should be solvable " + b2.isSolvable());
   }
 }
