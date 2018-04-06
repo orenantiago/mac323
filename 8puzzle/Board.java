@@ -19,8 +19,8 @@ public class Board {
     for(int row = 0; row < n; row++) {
       sb.append("\n");
       for(int col = 0; col < n; col++) {
-        sb.append(tiles[row][col]);
         sb.append(" ");
+        sb.append(tiles[row][col]);
       }
     }
     return sb.toString();
@@ -51,7 +51,7 @@ public class Board {
   }
   // public int manhattan()                 // sum of Manhattan distances between tiles and goal
   public boolean isGoal() {
-    return hamming == 0;
+    return hamming() == 0;
   }
   // public boolean equals(Object y)        // does this board equal y?
   // public Iterable<Board> neighbors()     // all neighboring boards
