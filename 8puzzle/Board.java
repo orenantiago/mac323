@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.StdOut;
 import java.lang.StringBuilder;
 import java.lang.IllegalArgumentException;
+import java.util.Iterator;
 
 public class Board {
   private int n;
@@ -9,8 +10,13 @@ public class Board {
   // create a board from an n-by-n array of tiles,
   // where tiles[row][col] = tile at (row, col)
   public Board(int[][] tiles) {
-    this.tiles = tiles;
     this.n = tiles.length;
+    this.tiles = new int [n][n];
+    for(int row = 0; row < this.n; row++) {
+      for(int col = 0; col < this.n; col++) {
+        this.tiles[row][col] = tiles[row][col];
+      }
+    }
   }
 
   // string representation of this board
@@ -90,7 +96,44 @@ public class Board {
 
     return true;
   }
-  // public Iterable<Board> neighbors()     // all neighboring boards
+  // all neighboring boards
+  // public Iterable<Board> neighbors() {
+  //
+  // }
+  //
+  // public class NeighborsIterator implements Iterator<Board> {
+  //   private int [][] tiles;
+  //   private int emptyRow, emptyCol, movement;
+  //
+  //   public NeighborsIterator(int[][]tiles) {
+  //     this.tiles = new int[tiles.length][tiles.length];
+  //     this.movement = 0;
+  //     for(int row = 0; row < tiles.length; row++) {
+  //       for(int col = 0; col < tiles.length; col++) {
+  //         if(tiles[row][col] == 0) {
+  //           emptyRow = row;
+  //           emptyCol = col;
+  //         }
+  //         this.tiles[row][col] = tiles[row][col];
+  //       }
+  //     }
+  //   }
+  //
+  //   public boolean hasNext() {
+  //     return this.movement < 4;
+  //   }
+  //
+  //   public Board next() {
+  //     int aux;
+  //     if(movement == 0) {
+  //       movement++;
+  //       if(emptyCol - 1 >= 0) {
+  //         aux = this.tiles[emptyRow][emptyCol];
+  //         this.tiles[emptyRow][emptyCol]
+  //       }
+  //     }
+  //   }
+  // }
   // public boolean isSolvable()            // is this board solvable?
 
   public static void main(String[] args) {
