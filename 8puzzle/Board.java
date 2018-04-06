@@ -78,7 +78,18 @@ public class Board {
   public boolean isGoal() {
     return hamming() == 0;
   }
-  // public boolean equals(Object y)        // does this board equal y?
+  public boolean equals(Object y) {
+    Board b = (Board) y;
+    if(b.size() != n)
+      return false;
+
+    for(int row = 0; row < n; row++)
+      for(int col = 0; col < n; col++)
+        if(b.tileAt(row, col) != tiles[row][col])
+          return false;
+
+    return true;
+  }
   // public Iterable<Board> neighbors()     // all neighboring boards
   // public boolean isSolvable()            // is this board solvable?
 
@@ -97,8 +108,13 @@ public class Board {
 
     int[][] tiles2 = {{1,2,3},{4,5,6},{7,8,0}};
     Board b1 = new Board(tiles2);
+    Board b2 = new Board(tiles2);
     StdOut.println(b1);
     StdOut.println(b1.hamming() + " tiles out of position");
     StdOut.println("manhattan distance = " + b1.manhattan());
+
+    StdOut.println("b should not equal b1 " + !b.equals(b1));
+    StdOut.println("b2 should equal b1 " + b2.equals(b1));
+
   }
 }
