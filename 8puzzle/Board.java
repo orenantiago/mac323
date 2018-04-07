@@ -33,12 +33,14 @@ public class Board {
     return sb.toString();
   }
 
+  // tile at (row, col) or 0 if blank
   public int tileAt(int row, int col) {
     if(row < 0 || col < 0 || row >= n || col >= n)
       throw new IllegalArgumentException();
     return this.tiles[row][col];
   }
 
+  // board size n
   public int size() {
     return n;
   }
@@ -58,6 +60,7 @@ public class Board {
     }
     return outOfPlace;
   }
+
   // sum of Manhattan distances between tiles and goal
   public int manhattan() {
     int total = 0, desiredRow, desiredCol;
@@ -81,9 +84,12 @@ public class Board {
     return x - y;
   }
 
+  // is this board the goal board?
   public boolean isGoal() {
     return hamming() == 0;
   }
+
+  // does this board equal y?
   public boolean equals(Object y) {
     Board b = (Board) y;
     if(b.size() != n)
@@ -101,6 +107,7 @@ public class Board {
   public boolean isSolvable() {
     return isSolvableForParity(n % 2);
   }
+
   private boolean isSolvableForParity(int parity) {
     int inversions = 0;
     int blankRow = 0;
@@ -211,6 +218,7 @@ public class Board {
     }
   }
 
+  // unit testing
   public static void main(String[] args) {
     int [][] tiles = {{5,8,7},{4,0,6},{1,2,3}};
     Board b = new Board(tiles);
