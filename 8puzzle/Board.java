@@ -1,3 +1,4 @@
+import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdOut;
 import java.lang.StringBuilder;
 import java.lang.IllegalArgumentException;
@@ -151,11 +152,13 @@ public class Board {
 
     public class NeighborsIterator implements Iterator<Board> {
         private int [][] tiles;
-        private int emptyRow, emptyCol, movement;
+        private int emptyRow, emptyCol, size, movement;
+        private Board[] boards;
 
         public NeighborsIterator(int[][]tiles) {
+            size = 0;
+            movement = 0;
             this.tiles = new int[tiles.length][tiles.length];
-            this.movement = 0;
             for(int row = 0; row < tiles.length; row++) {
                 for(int col = 0; col < tiles.length; col++) {
                     if(tiles[row][col] == 0) {
@@ -165,52 +168,39 @@ public class Board {
                     this.tiles[row][col] = tiles[row][col];
                 }
             }
+            populateArray();
+        }
+
+        private void populateArray() {
+            boards = new Board[4];
+            if(emptyCol - 1 >= 0) {
+                move(emptyRow, emptyCol - 1);
+                boards[size++] = new Board(this.tiles);
+                move(emptyRow, emptyCol - 1);
+            }
+            if(emptyRow - 1 >= 0) {
+                move(emptyRow - 1, emptyCol);
+                boards[size++] = new Board(this.tiles);
+                move(emptyRow - 1, emptyCol);
+            }
+            if(emptyCol + 1 < n) {
+                move(emptyRow, emptyCol + 1);
+                boards[size++] = new Board(this.tiles);
+                move(emptyRow, emptyCol + 1);
+            }
+            if(emptyRow + 1 < n) {
+                move(emptyRow + 1, emptyCol);
+                boards[size++] = new Board(this.tiles);
+                move(emptyRow + 1, emptyCol);
+            }
         }
 
         public boolean hasNext() {
-            return (movement == 0 && emptyCol - 1 >= 0) || (movement == 1 && emptyRow - 1 >= 0)
-                    || (movement == 2 && emptyCol + 1 < n) || (movement == 3 && emptyRow + 1 < n);
+            return movement < size;
         }
 
         public Board next() {
-            Board b;
-            if(movement == 0) {
-                movement++;
-                if(emptyCol - 1 >= 0) {
-                    move(emptyRow, emptyCol - 1);
-                    b = new Board(this.tiles);
-                    move(emptyRow, emptyCol - 1);
-                    return b;
-                }
-            }
-            if(movement == 1) {
-                movement++;
-                if(emptyRow - 1 >= 0) {
-                    move(emptyRow - 1, emptyCol);
-                    b = new Board(this.tiles);
-                    move(emptyRow - 1, emptyCol);
-                    return b;
-                }
-            }
-            if(movement == 2) {
-                movement++;
-                if(emptyCol + 1 < n) {
-                    move(emptyRow, emptyCol + 1);
-                    b = new Board(this.tiles);
-                    move(emptyRow, emptyCol + 1);
-                    return b;
-                }
-            }
-            if(movement == 3) {
-                movement++;
-                if(emptyRow + 1 < n) {
-                    move(emptyRow + 1, emptyCol);
-                    b = new Board(this.tiles);
-                    move(emptyRow + 1, emptyCol);
-                    return b;
-                }
-            }
-            return null;
+            return boards[movement++];
         }
         private void move(int row, int col) {
             int aux = this.tiles[emptyRow][emptyCol];
