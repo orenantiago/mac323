@@ -1,79 +1,71 @@
-import edu.princeton.cs.algs4.StdOut;
+import edu.princeton.cs.algs4.Stack;
+import edu.princeton.cs.algs4.MinPQ;
+
 public class Solver {
-  private static class MinPQ {
-    private int n = 0;
-    private Board [] items;
+    private MinPQ<SearchNode> boards;
+    private SearchNode solution;
 
-    private MinPQ() {
-      items = new Board[10];
+    private class SearchNode implements Comparable <SearchNode> {
+        private Board board;
+        private SearchNode previous;
+        private int moves;
+
+        private SearchNode(Board board, SearchNode previous, int moves) {
+            this.board = board;
+            this.previous = previous;
+            this.moves = moves;
+        }
+
+        public int compareTo(SearchNode node) {
+            int their = node.board.manhattan() + node.moves;
+            int ours = this.board.manhattan() + this.moves;
+            if(their > ours) return -1;
+            if(their == ours) return 0;
+            return 1;
+        }
+
+        private boolean isGoal() {
+            return board.isGoal();
+        }
     }
 
-    private void insert(Board b) {
-      if(n == items.length - 1)
-        resize();
+    public Solver(Board initial) {
+        if(initial == null || !initial.isSolvable())
+            throw new IllegalArgumentException();
 
-      items[++n] = b;
-      swim(n);
+        if(initial.isSolvable()) {
+            boards = new MinPQ<>();
+            SearchNode auxNode;
+            SearchNode currentNode = new SearchNode(initial, null, 0);
+            boards.insert(currentNode);
+            while(!currentNode.isGoal()) {
+                currentNode = boards.delMin();
+                int moves = currentNode.moves + 1;
+                for(Board nextBoard : currentNode.board.neighbors()) {
+                    if(currentNode.previous == null || !nextBoard.equals(currentNode.previous.board)) {
+                        auxNode = new SearchNode(nextBoard, currentNode, moves);
+                        if(auxNode.isGoal()) {
+                            currentNode = auxNode;
+                            break;
+                        }
+                        boards.insert(auxNode);
+                    }
+                }
+            }
+            solution = currentNode;
+        }
     }
 
-    private Board get() {
-      if(isEmpty())
-        return null;
-      Board min = items[1];
-      items[1] = items[n--];
-      sink(1);
-      items[n + 1] = null;
-
-      return min;
-    }
-
-    private void sink(int p) {
-      while(2*p <= n) {
-        int f = 2*p;
-        if(f < n && less(f+1, f)) f++;
-        if(less(p, f)) break;
-        exch(p, f);
-        p = f;
-      }
-    }
-
-    private boolean isEmpty() {
-      return n == 0;
-    }
-
-    private void resize() {
-      Board[] aux = new Board[items.length * 2];
-      for(int i = 1; i <= n; i++)
-        aux[i] = items[i];
-      items = aux;
-    }
-
-    private void swim(int n) {
-      while(n > 1 && less(n, n/2)) {
-        exch(n, n/2);
-        n /= 2;
-      }
-    }
-
-    private boolean less(int a, int b) {
-      return items[a].manhattan() < items[b].manhattan();
-    }
-
-    private void exch(int a, int b) {
-      Board aux = items[a];
-      items[a] = items[b];
-      items[b] = aux;
-    }
-  }
-  public static void main(String[] args) {
-    int [][] tiles = {{5,8,7},{4,0,6},{1,2,3}};
-    Board board = new Board(tiles);
-    MinPQ pq = new MinPQ();
-    pq.insert(board);
-    for(Board neighbor : board.neighbors()) {
-      pq.insert(neighbor);
-    }
-    while(!pq.isEmpty())
-      StdOut.println(pq.get());
-  }
+     public int moves() {
+        return solution.moves;
+     }
+     public Iterable<Board> solution() {
+         Stack<Board> solutionStack = new Stack<>();
+         solutionStack.push(solution.board);
+         while(solution.previous != null) {
+             solution = solution.previous;
+             solutionStack.push(solution.board);
+         }
+         return solutionStack;
+     }
 }
